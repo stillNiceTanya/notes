@@ -1,11 +1,5 @@
-function App() {
-  return (
-    <div className='App'>
-      <header className='App-header'>
-        <p>init proj</p>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+  return <h1 className='text-3xl font-bold'>Notes app</h1>;
+};
 
 export default App;
