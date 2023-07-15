@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { NotesContext } from '../context/NotesContext';
+import { NotesContext } from '../../context/NotesContext';
 import { FaPen, FaPlus, FaTrash } from 'react-icons/fa';
 import ToolbarButton from './ToolbarButton';
 import SearchBox from './SearchBox';

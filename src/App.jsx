@@ -1,15 +1,13 @@
-import Sidebar from './components/Sidebar';
-import Toolbar from './components/Toolbar';
-import Workspace from './components/Workspace';
+import { SideBar, ToolBar, Workspace } from './components';
 import { NotesContextProvider } from './context/NotesContext';
 
 const App = () => {
   return (
     <NotesContextProvider>
       <div className='w-screen h-screen flex flex-col'>
-        <Toolbar />
+        <ToolBar />
         <div className='w-full flex flex-1'>
-          <Sidebar />
+          <SideBar />
           <Workspace />
         </div>
       </div>

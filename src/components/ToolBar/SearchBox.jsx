@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { FaSearch } from 'react-icons/fa';
-import { NotesContext } from '../context/NotesContext';
+import { NotesContext } from '../../context/NotesContext';
 
 const SearchBox = () => {
   const { searchTerm, handleSearch } = useContext(NotesContext);
