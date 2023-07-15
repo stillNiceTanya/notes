@@ -6,7 +6,7 @@ const App = () => {
     <NotesContextProvider>
       <div className='w-screen h-screen flex flex-col'>
         <ToolBar />
-        <div className='w-full flex flex-1'>
+        <div className='w-full flex flex-col sm:flex-row flex-1 overflow-y-auto'>
           <SideBar />
           <Workspace />
         </div>

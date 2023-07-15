@@ -5,8 +5,14 @@ import ToolbarButton from './ToolbarButton';
 import SearchBox from './SearchBox';
 
 const ToolBar = () => {
-  const { addNote, deleteNote, startEditNote, selectedNote } =
-    useContext(NotesContext);
+  const {
+    addNote,
+    deleteNote,
+    handleSearch,
+    searchTerm,
+    selectedNote,
+    startEditNote,
+  } = useContext(NotesContext);
 
   const confirmDelete = () => {
     if (window.confirm('Вы уверены, что хотите удалить эту заметку?')) {
@@ -15,7 +21,7 @@ const ToolBar = () => {
   };
 
   return (
-    <div className='flex items-center justify-between flex-none w-full h-12 px-4 bg-gray-200'>
+    <div className='flex items-center flex-none gap-4 w-full h-12 px-4 bg-gray-200'>
       <div className='flex items-center h-full gap-2'>
         <ToolbarButton
           className='bg-blue-500'
@@ -43,7 +49,12 @@ const ToolBar = () => {
           <FaPen />
         </ToolbarButton>
       </div>
-      <SearchBox />
+      <div className='flex justify-end flex-1'>
+        <SearchBox
+          onChange={handleSearch}
+          value={searchTerm}
+        />
+      </div>
     </div>
   );
 };

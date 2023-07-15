@@ -1,5 +1,9 @@
 const Workspace = () => {
-  return <div className='w-3/4 h-full p-2 bg-yellow-200'>Правая панель</div>;
+  return (
+    <div className='p-4 flex-1 overflow-y-auto bg-yellow-200'>
+      Правая панель
+    </div>
+  );
 };
 
 export default Workspace;
