@@ -1,7 +1,14 @@
+import { useContext } from 'react';
+import { NotesContext } from '../../context/NotesContext';
+import { Editor } from './Editor';
+import NoSelectedNotePlaceholder from './NoSelectedNotePlaceholder';
+
 const Workspace = () => {
+  const { selectedNote } = useContext(NotesContext);
+
   return (
-    <div className='p-4 flex-1 overflow-y-auto bg-yellow-200'>
-      Правая панель
+    <div className='flex-1 overflow-y-auto'>
+      {selectedNote ? <Editor /> : <NoSelectedNotePlaceholder />}
     </div>
   );
 };

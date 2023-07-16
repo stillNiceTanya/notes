@@ -28,7 +28,11 @@ const NoteItem = ({ note }) => {
       <h4 className='text-sm font-bold text-ellipsis overflow-hidden whitespace-nowrap'>
         {getNoteTitle(note.content)}
       </h4>
-      <p className='text-xs'>{getFormattedDate(note.lastModified)}</p>
+      <p className='text-xs'>
+        <span className='italic'>
+          Обновлено {getFormattedDate(note.lastModified)}
+        </span>
+      </p>
     </div>
   );
 };

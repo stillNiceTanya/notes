@@ -1,0 +1,27 @@
+.ql-toolbar.ql-snow {
+  display: flex;
+  align-items: center;
+  height: 45px;
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  z-index: 1;
+  border: none;
+  border-bottom: 1px solid #ccc;
+}
+
+.note-editor.disabled .ql-toolbar {
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.5;
+}
+
+.ql-editor {
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.ql-container.ql-snow {
+  height: calc(100% - 45px);
+  border: none;
+}

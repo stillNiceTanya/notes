@@ -1,88 +1,117 @@
-import { createContext, useCallback, useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { createContext, useState, useCallback, useMemo } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { getNoteTextContent } from '../utils/getNoteTextContent';
+import { db } from '../db';
 
 export const NotesContext = createContext();
 
 export const NotesContextProvider = ({ children }) => {
-  const [notes, setNotes] = useState([]);
-
   const [selectedNoteId, setSelectedNoteId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isEditMode, setIsEditMode] = useState(false);
 
-  useEffect(() => {
-    const notesFromLocalStorage = JSON.parse(localStorage.getItem('notes'));
+  const notes = useLiveQuery(
+    async () => {
+      return (await db.notes.toArray()).reverse();
+    },
+    [],
+    []
+  );
 
-    if (notesFromLocalStorage) {
-      setNotes(notesFromLocalStorage);
+  const addNote = useCallback(async () => {
+    try {
+      const newNote = {
+        content: '',
+        lastModified: Date.now(),
+      };
+
+      const newNoteId = await db.notes.add(newNote);
+      setSelectedNoteId(newNoteId);
+    } catch (error) {
+      throw new Error(error);
     }
   }, []);
 
-  const addNote = () => {
-    const newNote = {
-      id: uuidv4(),
-      content: '',
-      lastModified: Date.now(),
-    };
-
-    setNotes([newNote, ...notes]);
-
-    localStorage.setItem('notes', JSON.stringify([newNote, ...notes]));
-  };
-
-  const deleteNote = useCallback(() => {
+  const deleteNote = useCallback(async () => {
     if (!selectedNoteId) return;
 
-    const newNotes = notes.filter((note) => note.id !== selectedNoteId);
+    try {
+      await db.notes.delete(selectedNoteId);
+      setSelectedNoteId(null);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }, [selectedNoteId]);
 
-    setNotes(newNotes);
+  const updateSelectedNote = useCallback(
+    async (content) => {
+      if (!selectedNoteId) return;
 
-    localStorage.setItem('notes', JSON.stringify(newNotes));
+      try {
+        await db.notes.update(selectedNoteId, {
+          content,
+          lastModified: Date.now(),
+        });
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
+    [selectedNoteId]
+  );
 
-    setSelectedNoteId(null);
-  }, [notes, selectedNoteId]);
-
-  const selectNote = (noteId) => {
-    if (!noteId) return;
-
-    setSelectedNoteId(noteId);
-    setIsEditMode(false);
-  };
-
-  const startEditNote = () => {
+  const startEditNote = useCallback(() => {
     if (!selectedNoteId) return;
 
     setIsEditMode(true);
-  };
+  }, [selectedNoteId]);
+
+  const selectNote = useCallback(
+    (noteId) => {
+      const note = notes.find((note) => note.id === noteId);
+
+      if (!note) return;
+
+      setSelectedNoteId(note.id);
+      setIsEditMode(false);
+    },
+    [notes]
+  );
 
   const handleSearch = ({ target: { value } }) => {
     setSearchTerm(value);
   };
 
-  const selectedNote = notes.find((note) => note.id === selectedNoteId);
+  const filteredNotes = useMemo(() => {
+    if (!searchTerm) return notes;
 
-  const filteredNotes = searchTerm
-    ? notes.filter((note) => {
-        const noteContent = getNoteTextContent(note.content.toLowerCase());
+    return notes.filter((note) => {
+      const noteContent = getNoteTextContent(note.content.toLowerCase());
 
-        return noteContent.toLowerCase().includes(searchTerm.toLowerCase());
-      })
-    : notes;
+      return noteContent.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+  }, [notes, searchTerm]);
+
+  const selectedNote = useMemo(() => {
+    if (!selectedNoteId) return null;
+
+    return notes.find((note) => note.id === selectedNoteId) ?? null;
+  }, [notes, selectedNoteId]);
 
   return (
     <NotesContext.Provider
       value={{
         isEditMode,
-        filteredNotes,
-        selectedNote,
         selectedNoteId,
+        selectedNote,
+        searchTerm,
+        setSearchTerm,
         addNote,
         deleteNote,
         selectNote,
+        updateSelectedNote,
         startEditNote,
         handleSearch,
-        searchTerm,
+        filteredNotes,
       }}
     >
       {children}
